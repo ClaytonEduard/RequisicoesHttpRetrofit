@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Foto> listaFotos = new ArrayList<>();
     private List<Postagem> listaPostagems = new ArrayList<>();
 
+    private DataService service;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,14 +56,62 @@ public class MainActivity extends AppCompatActivity {
                 //baseUrl("https://viacep.com.br/ws/").
                         baseUrl("https://jsonplaceholder.typicode.com").
                 addConverterFactory(GsonConverterFactory.create()).build();
-
+        service = retrofit.create(DataService.class);
         botaoRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //recuperarCEPRetrofit();
                 //recuperarListaRetrofit();
                 //recuperarListaPostagem();
-                salvarPostagem();
+                //salvarPostagem();
+                //atualizarPostagem();
+                removerPostagem();
+            }
+        });
+    }
+
+    private void removerPostagem() {
+        Call<Void> call = service.removerPostagem(2);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    textoResultado.setText("Status: " + response.code() + " Excluído com sucesso");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void atualizarPostagem() {
+        //Postagem postagem = new Postagem("1234", null, "Minhas férias belissímas");
+        //Call<Postagem> call = service.atualizarPostagem(2, postagem);
+        Postagem postagem = new Postagem();
+        postagem.setBody("Corpo da postagem alterada");
+        Call<Postagem> call = service.atualizarPostagemPatch(2, postagem);
+
+        call.enqueue(new Callback<Postagem>() {
+            @Override
+            public void onResponse(Call<Postagem> call, Response<Postagem> response) {
+                if (response.isSuccessful()) {
+                    Postagem postagemResposta = response.body();
+                    textoResultado.setText("" +
+                            " Status: " + response.code()
+                            + " Id: " + postagemResposta.getId()
+                            + " UserId: " + postagemResposta.getUserId()
+                            + " Título: " + postagemResposta.getTitle()
+                            + " Corpo: " + postagemResposta.getBody()
+                    );
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Postagem> call, Throwable t) {
+
             }
         });
     }
@@ -72,8 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //recupera o serviço e salva a postagem
-        DataService dataService = retrofit.create(DataService.class);
-        Call<Postagem> call = dataService.salvarPostagem(postagem);
+        Call<Postagem> call = service.salvarPostagem(postagem);
 
         //executando serviço
         call.enqueue(new Callback<Postagem>() {
@@ -99,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void recuperarListaPostagem() {
-        DataService dataService = retrofit.create(DataService.class);
-        Call<List<Postagem>> call = dataService.recuperarPostagems();
+
+        Call<List<Postagem>> call = service.recuperarPostagems();
         call.enqueue(new Callback<List<Postagem>>() {
             @Override
             public void onResponse(Call<List<Postagem>> call, Response<List<Postagem>> response) {
@@ -126,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
     //recuperar lista de itens
     private void recuperarListaRetrofit() {
 
-        DataService dataService = retrofit.create(DataService.class);
-        Call<List<Foto>> call = dataService.recuperarFotos();
+
+        Call<List<Foto>> call = service.recuperarFotos();
 
         call.enqueue(new Callback<List<Foto>>() {
             @Override
