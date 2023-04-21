@@ -60,9 +60,42 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //recuperarCEPRetrofit();
                 //recuperarListaRetrofit();
-                recuperarListaPostagem();
+                //recuperarListaPostagem();
+                salvarPostagem();
             }
         });
+    }
+
+    private void salvarPostagem() {
+        //configurar objeto postagem
+        Postagem postagem = new Postagem("1234", "Férias", "Minhas férias belissímas");
+
+
+        //recupera o serviço e salva a postagem
+        DataService dataService = retrofit.create(DataService.class);
+        Call<Postagem> call = dataService.salvarPostagem(postagem);
+
+        //executando serviço
+        call.enqueue(new Callback<Postagem>() {
+            @Override
+            public void onResponse(Call<Postagem> call, Response<Postagem> response) {
+                if (response.isSuccessful()) {
+                    Postagem postagemResposta = response.body();
+                    textoResultado.setText("" +
+                            "Código: " + response.code()
+                            + " Id: " + postagemResposta.getId()
+                            + " Título: " + postagemResposta.getTitle()
+                            + " Corpo: " + postagemResposta.getBody()
+                    );
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Postagem> call, Throwable t) {
+
+            }
+        });
+
     }
 
     private void recuperarListaPostagem() {
