@@ -17,3 +17,6 @@ Lista de Postagems - https://jsonplaceholder.typicode.com/posts
 
 https://user-images.githubusercontent.com/11823640/233706409-b20fc4a3-4ffa-4760-b7e4-e66be04279cc.mp4
 
+@POST postagem
+
+[screencast-Genymotion-2023-04-21_15.38.03.088.webm](https://user-images.githubusercontent.com/11823640/233711010-6da50f2e-2bf4-48f6-8f26-100257477bc9.webm)
