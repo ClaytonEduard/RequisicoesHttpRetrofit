@@ -13,6 +13,7 @@ import com.claytoneduard.requisicoeshttpretrofit.api.CEPService;
 import com.claytoneduard.requisicoeshttpretrofit.api.DataService;
 import com.claytoneduard.requisicoeshttpretrofit.model.CEP;
 import com.claytoneduard.requisicoeshttpretrofit.model.Foto;
+import com.claytoneduard.requisicoeshttpretrofit.model.Postagem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textoResultado;
     private Retrofit retrofit;
     private List<Foto> listaFotos = new ArrayList<>();
+    private List<Postagem> listaPostagems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +59,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //recuperarCEPRetrofit();
-                recuperarListaRetrofit();
+                //recuperarListaRetrofit();
+                recuperarListaPostagem();
             }
         });
+    }
+
+    private void recuperarListaPostagem() {
+        DataService dataService = retrofit.create(DataService.class);
+        Call<List<Postagem>> call = dataService.recuperarPostagems();
+        call.enqueue(new Callback<List<Postagem>>() {
+            @Override
+            public void onResponse(Call<List<Postagem>> call, Response<List<Postagem>> response) {
+                if (response.isSuccessful()) {
+                    listaPostagems = response.body();
+                    for (int i = 0; i < listaPostagems.size(); i++) {
+                        Postagem postagem = listaPostagems.get(i);
+                        Log.d("Resultado", "resultado" + postagem.getId() + " / " + postagem.getTitle());
+                        textoResultado.setText("Dados recuperados com sucesso!");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Postagem>> call, Throwable t) {
+
+            }
+        });
+
+
     }
 
     //recuperar lista de itens
@@ -77,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < listaFotos.size(); i++) {
                         Foto foto = listaFotos.get(i);
                         Log.d("Resultado", "resultado" + foto.getId() + " / " + foto.getTitle());
+                        textoResultado.setText("Dados recuperados com sucesso!");
                     }
 
                 }
